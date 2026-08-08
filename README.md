@@ -55,7 +55,6 @@ CSE440_Project_Group5/
 │    ├── requirements.txt       # Python dependencies
 │    ├── REWARD_FUNCTION.md     # Reward system documentation
 │    ├── requirements.txt       # Python dependencies
-│    ├── README.md
 │    │
 │    ├── agent/
 │    │    └── explorer.py       # Agent that follows the optimal policy
