@@ -1,1 +1,2 @@
-Contains list the tools or libraries for this project needs
+numpy
+matplotlib
