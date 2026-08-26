@@ -70,10 +70,9 @@ CSE440_Project_Group5/
 │          └── visualization.py       # Matplotlib visualization + animation
 │
 ├── others
-│    ├── 
-│    ├── 
-│    ├── 
-│    └──  
+│    ├── Final Presentation PPTX
+│    ├── Final Report PDF
+│    └── One Minute Demo Video 
 ├── requirements.txt       # Python dependencies
 └── README.md
 ```
