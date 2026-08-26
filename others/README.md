@@ -1,7 +1,6 @@
 
 <h1>This File only containing </h1>
 
-a) the final presentation PPTX file <br>
-b) the final report PDF <br>
-c) the update report PDF<br>
-d) the one-minute video file showing the project demo run.
+a) The final presentation PPTX file <br>
+b) The final report PDF <br>
+c) The <a href="https://drive.google.com/file/d/1fodB9fFA9zXg4A5yDWzwDA7lE2veceGJ/view?usp=sharing">one-minute video</a> file showing the project demo run. 
