@@ -1,6 +1,9 @@
 import os
 import sys
 import logging
+from collections.abc import Sequence
+from typing import Any
+
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -47,6 +50,36 @@ THEME = {
     "grid_line":  "#0f172a",
     "agent":      "#f43f5e",   # rose
 }
+
+
+def _calculate_reward_breakdown(
+    env: Any, path: Sequence[tuple[int, int]]
+) -> tuple[int, int, int, int]:
+    """Calculate an additive mission-reward breakdown.
+
+    Every movement costs ``REWARDS["step"]``. Hazard values are additional
+    penalties, and the goal value is an additional completion reward.
+    """
+    total_steps = max(len(path) - 1, 0)
+    step_costs = total_steps * int(REWARDS["step"])
+    hazard_values = {
+        REWARDS["crater"],
+        REWARDS["lava_close"],
+        REWARDS["gas"],
+    }
+    hazard_penalties = 0
+
+    for x, y in path:
+        cell_value = env.get_cell(x, y)
+        if cell_value in hazard_values:
+            hazard_penalties += int(cell_value)
+
+    goal_reward = 0
+    if path and env.get_cell(*path[-1]) == REWARDS["goal"]:
+        goal_reward = int(REWARDS["goal"])
+
+    total_reward = goal_reward + step_costs + hazard_penalties
+    return goal_reward, step_costs, hazard_penalties, total_reward
 
 
 def _style_axis(ax):
@@ -282,24 +315,9 @@ def plot_grid(env, path=None, animate=False, value_func=None, policy=None):
         end_cell_value = env.get_cell(end_pos[0], end_pos[1])
         mission_status = "✓ Completed" if end_cell_value == REWARDS["goal"] else "✗ Failed"
 
-        total_reward = 0
-        step_costs = total_steps * REWARDS["step"]
-        hazard_penalties = 0
-
-        for x, y in path:
-            cell_val = env.get_cell(x, y)
-            if cell_val == REWARDS["goal"]:
-                total_reward += REWARDS["goal"]
-            elif cell_val == REWARDS["crater"]:
-                total_reward += REWARDS["crater"]
-            elif cell_val == REWARDS["lava_close"]:
-                hazard_penalties += REWARDS["lava_close"]
-                total_reward += REWARDS["lava_close"]
-            elif cell_val == REWARDS["gas"]:
-                hazard_penalties += REWARDS["gas"]
-                total_reward += REWARDS["gas"]
-            else:
-                total_reward += REWARDS["step"]
+        goal_reward, step_costs, hazard_penalties, total_reward = (
+            _calculate_reward_breakdown(env, path)
+        )
 
         goal_pos = None
         for i in range(env.size):
@@ -322,7 +340,7 @@ Total Steps (Path Length):
    {total_steps} steps
 
 Reward Breakdown:
-   • Goal Reward:      +{REWARDS["goal"]}
+   • Goal Reward:      +{goal_reward}
    • Step Cost:        {step_costs}
    • Hazard Penalty:   {hazard_penalties}
    • Total Reward:     {total_reward}
